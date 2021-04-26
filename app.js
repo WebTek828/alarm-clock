@@ -6,7 +6,7 @@ const backDropDom = document.querySelector(".backdrop");
 
 const dayOfTheWeek = "Sun Mon Tue Wed Thur Fri Sat".split(" ");
 
-let alarmH, alarmM, alarmD, hour, minutes, seconds, day;
+let alarmH, alarmM, alarmD, hour, minutes, seconds, day, dotw, alarmSet;
 
 function daysOutPut() {
   const dayOutPut = dayOfTheWeek.map(
@@ -24,13 +24,14 @@ function now() {
   seconds = now.getSeconds().toString().padStart(2, 0);
 
   const nowTime = [hour, minutes, seconds];
-  const day = now.getDay();
+  day = now.getDay();
   dotw = dayOfTheWeek[day];
   times.forEach((t, i) => (t.textContent = nowTime[i]));
   const daysDom = document.querySelectorAll(".dotw");
   daysDom.forEach((dd) => {
     dd.textContent === dotw && dd.classList.add("active");
   });
+  alarmSet && checkAlarm();
 }
 
 setInterval(now, 1000);
@@ -66,15 +67,35 @@ alarmBtnDom.addEventListener("click", (e) => {
 });
 
 backDropDom.addEventListener("click", hideModal);
+
 function hideModal() {
   const modal = document.querySelector(".modal");
   modal && modal.remove();
 }
 
 function setAlarm() {
+  const existingAlarm = document.querySelector(".alarm-set");
+  existingAlarm && existingAlarm.remove();
+  alarmSet = true;
   const alarmTime = document.querySelectorAll(".alarm-time");
   alarmH = alarmTime[0].value;
   alarmM = alarmTime[1].value;
-  alarmD = dayOfTheWeek.indexOf(alarmTime[2].value);
-  console.log(alarmD);
+  alarmD = alarmTime[2].value;
+  hideModal();
+  alarmSetDom();
+}
+
+function checkAlarm() {
+  const [h] = alarmH.split(" ");
+  const [min] = alarmM.split(" ");
+  if (h === hour && minutes === min && alarmD === dotw) {
+    console.log("Time is up.Go off alarm.");
+  }
+}
+
+function alarmSetDom() {
+  const p = document.createElement("p");
+  p.classList.add("alarm-set");
+  p.innerHTML = `alarm will go off at ${alarmH} ${alarmM} on "${alarmD}" <span class="clear-alarm">X</span>`;
+  clock.prepend(p);
 }
