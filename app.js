@@ -74,23 +74,15 @@ function hideModal() {
 }
 
 function setAlarm() {
-  const existingAlarm = document.querySelector(".alarm-set");
-  existingAlarm && existingAlarm.remove();
+  clearAlarmFunc();
   alarmSet = true;
   const alarmTime = document.querySelectorAll(".alarm-time");
   alarmH = alarmTime[0].value;
   alarmM = alarmTime[1].value;
   alarmD = alarmTime[2].value;
+  alarmD = alarmD === "Every Day" ? dotw : alarmD;
   hideModal();
   alarmSetDom();
-}
-
-function checkAlarm() {
-  const [h] = alarmH.split(" ");
-  const [min] = alarmM.split(" ");
-  if (h === hour && minutes === min && alarmD === dotw) {
-    console.log("Time is up.Go off alarm.");
-  }
 }
 
 function alarmSetDom() {
@@ -98,4 +90,23 @@ function alarmSetDom() {
   p.classList.add("alarm-set");
   p.innerHTML = `alarm will go off at ${alarmH} ${alarmM} on "${alarmD}" <span class="clear-alarm">X</span>`;
   clock.prepend(p);
+  const clearAlarm = document.querySelector(".clear-alarm");
+  clearAlarm.addEventListener("click", (e) => {
+    clearAlarmFunc();
+  });
+}
+
+function clearAlarmFunc() {
+  alarmSet = false;
+  const existingAlarm = document.querySelector(".alarm-set");
+  existingAlarm && existingAlarm.remove();
+}
+
+function checkAlarm() {
+  console.log(alarmD);
+  const [h] = alarmH.split(" ");
+  const [min] = alarmM.split(" ");
+  if (h === hour && minutes === min && alarmD === dotw) {
+    console.log("Time is up.Go off alarm.");
+  }
 }
